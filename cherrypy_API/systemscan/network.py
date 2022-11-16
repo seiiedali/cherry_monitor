@@ -10,7 +10,7 @@ def _get_size(bytes, suffix="B"):
         bytes /= factor
 
 
-def network():
+def network_data():
     network_data = {}
     # Get Network Information
 
@@ -37,7 +37,7 @@ def network():
                     "IPv6 Broadcast": address.broadcast,
                 }
 
-    return json.dumps(network_data, indent=4)
+    return json.dumps(network_data)
 
 
 def network_traffic():
@@ -48,7 +48,4 @@ def network_traffic():
         "Total Received": _get_size(net_io.bytes_recv),
     }
 
-    return json.dumps(network_IO, indent=4)
-
-print(network())
-print(network_traffic())
+    return json.dumps(network_IO)

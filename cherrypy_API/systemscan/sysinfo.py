@@ -19,4 +19,4 @@ def sysinfo():
         "Boot Time": f"{bt.year}/{bt.month}/{bt.day} {bt.hour}:{bt.minute}:{bt.second}",
 
     }
-    return json.dumps(sysinfo_data, indent = 4)
+    return json.dumps(sysinfo_data)
