@@ -1,14 +1,22 @@
 import cherrypy
-import sys
-sys.path.append('../')
+import os
+from os.path import abspath
 from systemscan import hwinfo, sysinfo, network
 
 class SystemMonitor(object):
     
     @cherrypy.expose
+    def index(self):
+        index_path = '/home/seyed/projects/cherry_monitor/view/index.html'
+        with open(index_path, 'r') as f:
+            front_page = f.read()
+        return front_page
+
+
+    @cherrypy.expose
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
-    def index(self):
+    def sysinfo(self):
         sys_data = sysinfo.sysinfo()
         return sys_data
 
@@ -25,7 +33,7 @@ class SystemMonitor(object):
     @cherrypy.expose
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
-    def hdinfo(self, hardware):
+    def hdinfo(self, hardware='cpu'):
         if hardware == 'cpu':
             hdinfo_data = hwinfo.cpu()
         elif hardware == 'memory':
@@ -34,5 +42,31 @@ class SystemMonitor(object):
             hdinfo_data = hwinfo.disk()
         return hdinfo_data
 
+
+CP_CONF = {
+        '/':{
+            'tools.sessions.on': True,
+            'tools.staticdir.root': abspath(os.getcwd()),
+            'tools.staticdir.index': '/views/index.html'
+        },
+        '/view': {
+            'tools.staticdir.on': True,
+            'tools.staticdir.dir': abspath('./view')
+            },
+        '/css': {
+            'tools.staticdir.on': True,
+            'tools.staticdir.dir': abspath('./view/css')
+            },
+        '/js': {
+            'tools.staticdir.on': True,
+            'tools.staticdir.dir': abspath('./view/js')
+            },
+        '/assets': {
+            'tools.staticdir.on': True,
+            'tools.staticdir.dir': abspath('./view/assets')
+            },
+        }
+
+
 if __name__ == "__main__":
-    cherrypy.quickstart(SystemMonitor())
+    cherrypy.quickstart(SystemMonitor(), '/', CP_CONF)
