@@ -3,15 +3,15 @@ import os
 from os.path import abspath
 from systemscan import hwinfo, sysinfo, network
 
+
 class SystemMonitor(object):
-    
+
     @cherrypy.expose
     def index(self):
         index_path = '/home/seyed/projects/cherry_monitor/view/index.html'
         with open(index_path, 'r') as f:
             front_page = f.read()
         return front_page
-
 
     @cherrypy.expose
     @cherrypy.tools.json_in()
@@ -23,7 +23,7 @@ class SystemMonitor(object):
     @cherrypy.expose
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
-    def network(self, req_type = 'data'):
+    def network(self, req_type='data'):
         if req_type == 'data':
             net_data = network.network_data()
         elif req_type == 'traffic':
@@ -44,28 +44,28 @@ class SystemMonitor(object):
 
 
 CP_CONF = {
-        '/':{
-            'tools.sessions.on': True,
-            'tools.staticdir.root': abspath(os.getcwd()),
-            'tools.staticdir.index': '/views/index.html'
-        },
-        '/view': {
-            'tools.staticdir.on': True,
-            'tools.staticdir.dir': abspath('./view')
-            },
-        '/css': {
-            'tools.staticdir.on': True,
-            'tools.staticdir.dir': abspath('./view/css')
-            },
-        '/js': {
-            'tools.staticdir.on': True,
-            'tools.staticdir.dir': abspath('./view/js')
-            },
-        '/assets': {
-            'tools.staticdir.on': True,
-            'tools.staticdir.dir': abspath('./view/assets')
-            },
-        }
+    '/': {
+        'tools.sessions.on': True,
+        'tools.staticdir.root': abspath(os.getcwd()),
+        'tools.staticdir.index': '/views/index.html'
+    },
+    '/view': {
+        'tools.staticdir.on': True,
+        'tools.staticdir.dir': abspath('./view')
+    },
+    '/css': {
+        'tools.staticdir.on': True,
+        'tools.staticdir.dir': abspath('./view/css')
+    },
+    '/js': {
+        'tools.staticdir.on': True,
+        'tools.staticdir.dir': abspath('./view/js')
+    },
+    '/assets': {
+        'tools.staticdir.on': True,
+        'tools.staticdir.dir': abspath('./view/assets')
+    },
+}
 
 
 if __name__ == "__main__":
