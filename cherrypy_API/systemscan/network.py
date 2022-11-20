@@ -24,7 +24,7 @@ def network_interface():
                     "IPv4 Broadcast": address.broadcast,
                 }
             elif str(address.family) == 'AddressFamily.AF_PACKET':
-                network_interface[interface_name]["Phisical"] = {
+                network_interface[interface_name]["Physical"] = {
                     "MAC Address": address.address,
                     "Broadcast MAC": address.broadcast,
                 }

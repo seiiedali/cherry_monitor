@@ -25,7 +25,6 @@ class SystemMonitor(object):
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
     def network(self, req_type='interface'):
-        net_data = ''
         if req_type == 'interface':
             net_data = network.network_interface()
         elif req_type == 'traffic':
@@ -35,7 +34,7 @@ class SystemMonitor(object):
     @cherrypy.expose
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
-    def hdinfo(self, hardware='cpu'):
+    def hdinfo(self, hardware='memory'):
         if hardware == 'cpu':
             hdinfo_data = hwinfo.cpu()
         elif hardware == 'memory':
