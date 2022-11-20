@@ -2,7 +2,6 @@
 import platform
 import psutil
 from datetime import datetime
-import json
 
 def sysinfo():
     uname = platform.uname()
@@ -19,4 +18,4 @@ def sysinfo():
         "Boot Time": f"{bt.year}/{bt.month}/{bt.day} {bt.hour}:{bt.minute}:{bt.second}",
 
     }
-    return json.dumps(sysinfo_data)
+    return sysinfo_data

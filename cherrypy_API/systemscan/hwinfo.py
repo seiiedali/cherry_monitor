@@ -1,6 +1,5 @@
 
 import psutil
-import json
 
 
 def __get_size(bytes, suffix="B"):
@@ -10,6 +9,7 @@ def __get_size(bytes, suffix="B"):
         if bytes < factor:
             return f"{bytes:.2f}{unit}{suffix}"
         bytes /= factor
+
 
 def cpu():
     cpu_per = {}
@@ -26,19 +26,20 @@ def cpu():
         "Current Frequency": f"{cpufreq.current:.2f}Mhz",
         "Total CPU Usage:": f"{psutil.cpu_percent()}%",
         "Cores usage": cpu_per
-    }    
+    }
 
-    return json.dumps(cpu_data)
+    return cpu_data
+
 
 def memory():
     memory = {}
 
     svmem = psutil.virtual_memory()
     virtual_mem = {
-    "Total": __get_size(svmem.total),
-    "Available": __get_size(svmem.available),
-    "Used:": __get_size(svmem.used),
-    "Percentage": svmem.percent
+        "Total": __get_size(svmem.total),
+        "Available": __get_size(svmem.available),
+        "Used:": __get_size(svmem.used),
+        "Percentage": svmem.percent
     }
 
     # get the swap memory details (if exists)
@@ -51,11 +52,12 @@ def memory():
 
     }
 
-    memory= {
-        "Virtual Memory" : virtual_mem,
+    memory = {
+        "Virtual Memory": virtual_mem,
         "Swap Memory": swap_mem
-    }    
-    return json.dumps(memory)
+    }
+    return memory
+
 
 def disk():
     disk_data = {}
@@ -85,5 +87,4 @@ def disk():
         "Total write": __get_size(disk_io.write_bytes),
     }
 
-    return json.dumps(disk_data)
-    
+    return disk_data

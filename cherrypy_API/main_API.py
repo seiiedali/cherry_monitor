@@ -1,5 +1,6 @@
 import cherrypy
 import os
+import json
 from os.path import abspath
 from systemscan import hwinfo, sysinfo, network
 
@@ -18,17 +19,18 @@ class SystemMonitor(object):
     @cherrypy.tools.json_out()
     def sysinfo(self):
         sys_data = sysinfo.sysinfo()
-        return sys_data
+        return json.dumps(sys_data)
 
     @cherrypy.expose
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
-    def network(self, req_type='data'):
-        if req_type == 'data':
-            net_data = network.network_data()
+    def network(self, req_type='interface'):
+        net_data = ''
+        if req_type == 'interface':
+            net_data = network.network_interface()
         elif req_type == 'traffic':
             net_data = network.network_traffic()
-        return net_data
+        return  json.dumps(net_data)
 
     @cherrypy.expose
     @cherrypy.tools.json_in()
@@ -40,7 +42,7 @@ class SystemMonitor(object):
             hdinfo_data = hwinfo.memory()
         elif hardware == 'disk':
             hdinfo_data = hwinfo.disk()
-        return hdinfo_data
+        return json.dumps(hdinfo_data)
 
 
 CP_CONF = {
