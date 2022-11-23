@@ -9,10 +9,7 @@ class SystemMonitor(object):
 
     @cherrypy.expose
     def index(self):
-        index_path = './view/index.html'
-        with open(index_path, 'r') as f:
-            front_page = f.read()
-        return front_page
+        raise cherrypy.HTTPRedirect(cherrypy.url('/view/login/index.html'))
 
     @cherrypy.expose
     @cherrypy.tools.json_in()
@@ -57,26 +54,30 @@ CP_CONF = {
         'tools.staticdir.root': abspath(os.getcwd()),
         'tools.staticdir.index': '/views/index.html'
     },
-    '/sysmodule': {
-        'tools.staticdir.on': True,
-        'tools.staticdir.dir': abspath('./sysmodule')
-    },
     '/view': {
         'tools.staticdir.on': True,
         'tools.staticdir.dir': abspath('./view')
-    },
-    '/css': {
-        'tools.staticdir.on': True,
-        'tools.staticdir.dir': abspath('./view/css')
-    },
-    '/js': {
-        'tools.staticdir.on': True,
-        'tools.staticdir.dir': abspath('./view/js')
-    },
-    '/assets': {
-        'tools.staticdir.on': True,
-        'tools.staticdir.dir': abspath('./view/assets')
-    },
+    }
+    # '/sysmodule': {
+    #     'tools.staticdir.on': True,
+    #     'tools.staticdir.dir': abspath('./cherrypy_API/sysmodule')
+    # },
+    # '/view': {
+    #     'tools.staticdir.on': True,
+    #     'tools.staticdir.dir': abspath('./view')
+    # },
+    # '/css': {
+    #     'tools.staticdir.on': True,
+    #     'tools.staticdir.dir': abspath('./view/css')
+    # },
+    # '/js': {
+    #     'tools.staticdir.on': True,
+    #     'tools.staticdir.dir': abspath('./view/js')
+    # },
+    # '/assets': {
+    #     'tools.staticdir.on': True,
+    #     'tools.staticdir.dir': abspath('./view/assets')
+    # },
 }
 
 
