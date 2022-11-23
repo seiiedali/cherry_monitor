@@ -18,7 +18,7 @@ def network_interface():
         network_interface[interface_name] = {}
         for address in interface_addresses:
             if str(address.family) == 'AddressFamily.AF_INET':
-                network_interface[interface_name]['IPv4'] = {
+                network_interface[interface_name]["IPv4"] = {
                     "IPv4 Address": address.address,
                     "IPv4 Netmask": address.netmask,
                     "IPv4 Broadcast": address.broadcast,

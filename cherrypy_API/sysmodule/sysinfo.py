@@ -4,6 +4,7 @@ import psutil
 from datetime import datetime
 
 def sysinfo():
+
     uname = platform.uname()
     boot_time_timestamp = psutil.boot_time()
     bt = datetime.fromtimestamp(boot_time_timestamp)

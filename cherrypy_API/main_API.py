@@ -2,14 +2,14 @@ import cherrypy
 import os
 import json
 from os.path import abspath
-from systemscan import hwinfo, sysinfo, network
+from sysmodule import hwinfo, sysinfo, network, log
 
 
 class SystemMonitor(object):
 
     @cherrypy.expose
     def index(self):
-        index_path = '/home/seyed/projects/cherry_monitor/view/index.html'
+        index_path = './view/index.html'
         with open(index_path, 'r') as f:
             front_page = f.read()
         return front_page
@@ -24,24 +24,31 @@ class SystemMonitor(object):
     @cherrypy.expose
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
-    def network(self, req_type='interface'):
-        if req_type == 'interface':
-            net_data = network.network_interface()
-        elif req_type == 'traffic':
-            net_data = network.network_traffic()
-        return  json.dumps(net_data)
+    def network(self):
+        net_data = {}
+        net_data['interface'] = network.network_interface()
+        net_data['traffic'] = network.network_traffic()
+
+        return json.dumps(net_data)
 
     @cherrypy.expose
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
-    def hdinfo(self, hardware='memory'):
-        if hardware == 'cpu':
-            hdinfo_data = hwinfo.cpu()
-        elif hardware == 'memory':
-            hdinfo_data = hwinfo.memory()
-        elif hardware == 'disk':
-            hdinfo_data = hwinfo.disk()
+    def hdinfo(self):
+        hdinfo_data = {}
+        hdinfo_data['cpu'] = hwinfo.cpu()
+        hdinfo_data['memory'] = hwinfo.memory()
+        hdinfo_data['disk'] = hwinfo.disk()
+
         return json.dumps(hdinfo_data)
+
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    def log(self, file_name, direction, line_count):
+        log_data = log.read_log_file(file_name=file_name, direction=direction,
+                                     line_count=line_count)
+        return json.dumps(log_data)
 
 
 CP_CONF = {
@@ -49,6 +56,10 @@ CP_CONF = {
         'tools.sessions.on': True,
         'tools.staticdir.root': abspath(os.getcwd()),
         'tools.staticdir.index': '/views/index.html'
+    },
+    '/sysmodule': {
+        'tools.staticdir.on': True,
+        'tools.staticdir.dir': abspath('./sysmodule')
     },
     '/view': {
         'tools.staticdir.on': True,
