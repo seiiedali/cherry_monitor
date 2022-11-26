@@ -51,10 +51,8 @@ $("body").on(
         };
         let logResponse = await getRequest('log', logData);
         let logHtml = await logComponent(logResponse, fileName, readDirection,recordCount)
-        console.log(logHtml)
+        // console.log(logHtml)
         await $('#content').html(logHtml)
-        // let requestParams = await $(this).serialize()
-        // console.log(requestParams);
     }
 )
 
