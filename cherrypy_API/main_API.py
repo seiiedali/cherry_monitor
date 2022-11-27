@@ -1,12 +1,8 @@
-# from os.path import os.path.abspath
 import os
 import json
-import uuid
 import jwt
 import cherrypy
 from sysmodule import hwinfo, sysinfo, network, log, pam
-# import logging
-
 
 SERVER_SECRET = "cherrypy"
 
@@ -176,35 +172,12 @@ CP_CONF = {
     '/': {
         'tools.sessions.on': True,
         'tools.staticdir.root': os.path.abspath(os.getcwd()),
-        # 'tools.sessions.storage_class': cherrypy.lib.sessions.FileSession,
-        # 'tools.sessions.storage_type': "File",
-        # 'tools.sessions.storage_path': "sessions",
         'tools.staticdir.index': '/view/login/index.html'
     },
     '/view': {
         'tools.staticdir.on': True,
         'tools.staticdir.dir': os.path.abspath('./view')
     }
-    # '/sysmodule': {
-    #     'tools.staticdir.on': True,
-    #     'tools.staticdir.dir': os.path.abspath('./cherrypy_API/sysmodule')
-    # },
-    # '/view': {
-    #     'tools.staticdir.on': True,
-    #     'tools.staticdir.dir': os.path.abspath('./view')
-    # },
-    # '/css': {
-    #     'tools.staticdir.on': True,
-    #     'tools.staticdir.dir': os.path.abspath('./view/css')
-    # },
-    # '/js': {
-    #     'tools.staticdir.on': True,
-    #     'tools.staticdir.dir': os.path.abspath('./view/js')
-    # },
-    # '/assets': {
-    #     'tools.staticdir.on': True,
-    #     'tools.staticdir.dir': os.path.abspath('./view/assets')
-    # },
 }
 
 
