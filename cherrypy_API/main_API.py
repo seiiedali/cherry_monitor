@@ -1,10 +1,14 @@
-import cherrypy
+# from os.path import os.path.abspath
 import os
 import json
-from os.path import abspath
 import uuid
+import jwt
+import cherrypy
 from sysmodule import hwinfo, sysinfo, network, log, pam
-import logging
+# import logging
+
+
+SERVER_SECRET = "cherrypy"
 
 
 class SystemMonitor(object):
@@ -44,7 +48,7 @@ class SystemMonitor(object):
         Returns:
             str: return json string containing information on system information
         """
-        sys_data = sysinfo.sysinfo()
+        sys_data: dict = sysinfo.sysinfo()
         sys_data_json: str = json.dumps(sys_data)
         return sys_data_json
 
@@ -75,7 +79,7 @@ class SystemMonitor(object):
         Returns:
             str: json string including information on system hardware
         """
-        hdinfo_data = {}
+        hdinfo_data: dict = {}
         hdinfo_data['cpu'] = hwinfo.cpu()
         hdinfo_data['memory'] = hwinfo.memory()
         hdinfo_data['disk'] = hwinfo.disk()
@@ -108,50 +112,98 @@ class SystemMonitor(object):
     @cherrypy.expose
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
-    def login(self, username: str, password: str):
-        status: bool = pam.user_login(username=username, password=password)
-        response = {'authenticate': status}
-        if status:
-            print('user authenticated')
-            session_token: str = uuid.uuid4().hex
-            cookie: dict = cherrypy.response.cookie
-            cookie['session_token'] = (session_token)
-            # raise cherrypy.HTTPRedirect(cherrypy.url('/view/dashboard/index.html'))
-            return json.dumps(response)
+    def login(self, username: str, password: str) -> str:
+        """API endpoint route to verify user login with host system
+        users authentication
+
+        Args:
+            username (str): registered system username
+            password (str): registered system password
+
+        Returns:
+            str: json string returened with authentation status, accessible
+            with 'authenticated' keyword
+        """
+        response: dict = {'authenticated': False}
+        cookie_req: dict = cherrypy.request.cookie
+        cookie_res: dict = cherrypy.response.cookie
+
+        authenticated: bool = pam.user_login(
+            username=username, password=password)
+        if authenticated:
+
+            token_claims: dict = {
+                'session_id': cookie_req['session_id'].value,
+                'verified_user': username
+            }
+
+            session_token = jwt.encode(
+                payload=token_claims, key=SERVER_SECRET, algorithm="HS256")
+
+            response['authenticated'] = True
+            cookie_res['token'] = (session_token)
+        response: str = json.dumps(response)
+        return response
+
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    def token_handler(self):
+        
+        cookie = cherrypy.request.cookie
+        response: dict = {'verified': False,
+                          'message': ''}
+        
+        session_token = cookie.get('token', False)
+        if not session_token:
+            response['verified'] = False
+            response['message'] = 'No session token is porvided, Try to log in!'
+        # verify the session token
         else:
-            # return 'failed'
-            return json.dumps(response)
+            session_token = session_token.value
+            try:
+                decode_token = jwt.decode(session_token,SERVER_SECRET, algorithms=["HS256"])
+            except jwt.InvalidSignatureError:
+                response['verified'] = False
+                response['message'] = 'Token is not verfied'
+            else:
+                response['verified'] = True
+                response['message'] = str(decode_token)
+        return response
 
 
 CP_CONF = {
     '/': {
         'tools.sessions.on': True,
-        'tools.staticdir.root': abspath(os.getcwd()),
+        'tools.staticdir.root': os.path.abspath(os.getcwd()),
+        # 'tools.sessions.storage_class': cherrypy.lib.sessions.FileSession,
+        # 'tools.sessions.storage_type': "File",
+        # 'tools.sessions.storage_path': "sessions",
         'tools.staticdir.index': '/view/login/index.html'
     },
     '/view': {
         'tools.staticdir.on': True,
-        'tools.staticdir.dir': abspath('./view')
+        'tools.staticdir.dir': os.path.abspath('./view')
     }
     # '/sysmodule': {
     #     'tools.staticdir.on': True,
-    #     'tools.staticdir.dir': abspath('./cherrypy_API/sysmodule')
+    #     'tools.staticdir.dir': os.path.abspath('./cherrypy_API/sysmodule')
     # },
     # '/view': {
     #     'tools.staticdir.on': True,
-    #     'tools.staticdir.dir': abspath('./view')
+    #     'tools.staticdir.dir': os.path.abspath('./view')
     # },
     # '/css': {
     #     'tools.staticdir.on': True,
-    #     'tools.staticdir.dir': abspath('./view/css')
+    #     'tools.staticdir.dir': os.path.abspath('./view/css')
     # },
     # '/js': {
     #     'tools.staticdir.on': True,
-    #     'tools.staticdir.dir': abspath('./view/js')
+    #     'tools.staticdir.dir': os.path.abspath('./view/js')
     # },
     # '/assets': {
     #     'tools.staticdir.on': True,
-    #     'tools.staticdir.dir': abspath('./view/assets')
+    #     'tools.staticdir.dir': os.path.abspath('./view/assets')
     # },
 }
 

@@ -3,7 +3,6 @@ $(document).ready(() => {
     $("form").on(
         "submit",
         async (event) => {
-            console.log('why this isnt working')
             event.preventDefault();
             let inputUsername = $("[name='username']").val();
             let inputPassword = $("[name='password']").val();
@@ -11,20 +10,17 @@ $(document).ready(() => {
                 username: inputUsername,
                 password: inputPassword
             };
-            // console.log('entered data', inputUsername, inputPassword)
             let url = 'http://localhost:8080/login';
             let result = null
             await $.getJSON(url, loginData, (data)=> result = data)
             result = await JSON.parse(result)
-            // await console.log(result, typeof(result))
-            // await console.log(result['authenticate'])
-            if(result['authenticate'] === true){
-                console.log('user is authenticate')
+            await console.log(result['authenticated'])
+            if(result['authenticated'] === true){
                 window.location.replace("http://localhost:8080/view/dashboard/index.html");
             }
             else{
                 $('#message').html(`<div class="alert alert-danger" role="alert">
-                Entered username, password is wrong. Try Again!
+                The entered <strong>username</strong> and/or <strong>password</strong> is wrong. Try Again!
               </div>`)
             }
         }
