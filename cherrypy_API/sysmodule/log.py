@@ -17,14 +17,13 @@ def read_log_file(file_name, direction='head', line_count='100'):
                 end_index = len(lines_list) - 1
             elif direction == 'head':
                 start_index = 0
-                end_index = int_count - 1
+                end_index = int_count
             file_lines = [line for line in lines_list[start_index:end_index]]
         else:
             file_lines = lines_list
-        
-        parsed_log = []
-        for line in file_lines:
-            parsed_log += line.split()
-    return parsed_log
 
-print(read_log_file('syslog', 'head', '100'))
+        parsed_log = {}
+        print(len(file_lines))
+        for log_index, line in enumerate(file_lines):
+            parsed_log[log_index] = line.split()
+    return parsed_log
