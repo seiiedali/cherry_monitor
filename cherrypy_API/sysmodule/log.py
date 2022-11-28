@@ -21,7 +21,10 @@ def read_log_file(file_name, direction='head', line_count='100'):
             file_lines = [line for line in lines_list[start_index:end_index]]
         else:
             file_lines = lines_list
+        
+        parsed_log = []
+        for line in file_lines:
+            parsed_log += line.split()
+    return parsed_log
 
-
-    return file_lines
-
+print(read_log_file('syslog', 'head', '100'))

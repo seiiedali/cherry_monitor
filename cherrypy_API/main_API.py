@@ -32,7 +32,48 @@ class SystemMonitor(object):
             cherrypy.HTTPRedirect: raise an exeption of the requested redirection/
             to the cherrypy running demon to redirect the client
         """
-        raise cherrypy.HTTPRedirect(cherrypy.url('/view/login/index.html'))
+        raise cherrypy.HTTPRedirect(cherrypy.url('/view/newDashboard/login.html'))
+    
+    @cherrypy.expose
+    def default(self, *args, **kwargs):
+        raise cherrypy.HTTPRedirect(cherrypy.url('/view/newDashboard/404.html'))
+    
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    def login(self, username: str, password: str) -> str:
+        """API endpoint route to verify user login with host system
+        users authentication
+
+        Args:
+            username (str): registered system username
+            password (str): registered system password
+
+        Returns:
+            str: json string returened with authentation status, accessible
+            with 'authenticated' keyword
+        """
+        response: dict = {'authenticated': False}
+        cookie_req: dict = cherrypy.request.cookie
+        cookie_res: dict = cherrypy.response.cookie
+
+        authenticated: bool = pam.user_login(
+            username=username, password=password)
+        if authenticated:
+
+            token_claims: dict = {
+                'session_id': cookie_req['session_id'].value,
+                'verified_user': username
+            }
+
+            session_token = jwt.encode(
+                payload=token_claims, key=SERVER_SECRET, algorithm="HS256")
+
+            response['authenticated'] = True
+            cookie_res['token'] = (session_token)
+        response: str = json.dumps(response)
+        return response
+
 
     @cherrypy.expose
     @cherrypy.tools.json_in()
@@ -105,41 +146,6 @@ class SystemMonitor(object):
         log_data_json: str = json.dumps(log_data)
         return log_data_json
 
-    @cherrypy.expose
-    @cherrypy.tools.json_in()
-    @cherrypy.tools.json_out()
-    def login(self, username: str, password: str) -> str:
-        """API endpoint route to verify user login with host system
-        users authentication
-
-        Args:
-            username (str): registered system username
-            password (str): registered system password
-
-        Returns:
-            str: json string returened with authentation status, accessible
-            with 'authenticated' keyword
-        """
-        response: dict = {'authenticated': False}
-        cookie_req: dict = cherrypy.request.cookie
-        cookie_res: dict = cherrypy.response.cookie
-
-        authenticated: bool = pam.user_login(
-            username=username, password=password)
-        if authenticated:
-
-            token_claims: dict = {
-                'session_id': cookie_req['session_id'].value,
-                'verified_user': username
-            }
-
-            session_token = jwt.encode(
-                payload=token_claims, key=SERVER_SECRET, algorithm="HS256")
-
-            response['authenticated'] = True
-            cookie_res['token'] = (session_token)
-        response: str = json.dumps(response)
-        return response
 
     @cherrypy.expose
     @cherrypy.tools.json_in()
@@ -171,8 +177,8 @@ class SystemMonitor(object):
 CP_CONF = {
     '/': {
         'tools.sessions.on': True,
-        'tools.staticdir.root': os.path.abspath(os.getcwd()),
-        'tools.staticdir.index': '/view/login/index.html'
+        'tools.staticdir.root': os.path.abspath(os.getcwd())
+        # 'tools.staticdir.index': '/view/login/index.html'
     },
     '/view': {
         'tools.staticdir.on': True,
