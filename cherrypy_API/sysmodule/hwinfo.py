@@ -19,8 +19,8 @@ def cpu():
         cpu_per[f"Core {i}"] = f"{percentage}%"
 
     cpu_data = {
-        "Physical cores:": psutil.cpu_count(logical=False),
-        "Total cores:": psutil.cpu_count(logical=True),
+        "Physical cores": psutil.cpu_count(logical=False),
+        "Total cores": psutil.cpu_count(logical=True),
         "Max Frequency": f"{cpufreq.max:.2f}Mhz",
         "Min Frequency": f"{cpufreq.min:.2f}Mhz",
         "Current Frequency": f"{cpufreq.current:.2f}Mhz",
@@ -38,7 +38,7 @@ def memory():
     virtual_mem = {
         "Total": __get_size(svmem.total),
         "Available": __get_size(svmem.available),
-        "Used:": __get_size(svmem.used),
+        "Used": __get_size(svmem.used),
         "Percentage": svmem.percent
     }
 

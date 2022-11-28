@@ -109,19 +109,44 @@ class SystemMonitor(object):
     @cherrypy.expose
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
-    def hdinfo(self) -> str:
+    def memory(self) -> str:
         """use external module to fetch system hardware information and returns
         json string respone on 'baseURL/hdinfo' requests
 
         Returns:
             str: json string including information on system hardware
         """
-        hdinfo_data: dict = {}
-        hdinfo_data['cpu'] = hwinfo.cpu()
-        hdinfo_data['memory'] = hwinfo.memory()
-        hdinfo_data['disk'] = hwinfo.disk()
+        memory_data: dict = json.dumps(hwinfo.memory())
 
-        return json.dumps(hdinfo_data)
+        return memory_data
+    
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    def cpu(self) -> str:
+        """use external module to fetch system hardware information and returns
+        json string respone on 'baseURL/hdinfo' requests
+
+        Returns:
+            str: json string including information on system hardware
+        """
+        cpu_data: dict = json.dumps(hwinfo.cpu())
+
+        return cpu_data
+    
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    def disk(self) -> str:
+        """use external module to fetch system hardware information and returns
+        json string respone on 'baseURL/hdinfo' requests
+
+        Returns:
+            str: json string including information on system hardware
+        """
+        disk_data: dict = json.dumps(hwinfo.disk())
+
+        return disk_data
 
     @cherrypy.expose
     @cherrypy.tools.json_in()
