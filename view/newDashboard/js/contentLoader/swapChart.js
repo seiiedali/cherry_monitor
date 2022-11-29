@@ -29,6 +29,7 @@ const applySwapChart = (available, used, total) => {
     data: {
       labels: ["Used", "Available", "Unavailable"],
       datasets: [{
+        label: 'GB',
         data: [usedMemory, availableMemory, unavailable],
         backgroundColor: ['#dc3545', '#007bff', '#cac7d1'],
       }],

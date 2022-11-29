@@ -7,55 +7,76 @@ Chart.defaults.global.defaultFontColor = '#292b2c';
 const cpuChart = async () => {
   let jsonResponse = ''
   await $.get('http://localhost:8080/cpu', (responseData) => jsonResponse = responseData)
-  let parsedJson = await isJsonString(jsonResponse) 
-  parsedJson['Physical cores:']
-  await applyMermoryChart(available, used, total)
-  await $('#memoryFooter').text('Uppdated: ' + getDate())
+  let parsedJson = await isJsonString(jsonResponse)
+  let physicalCoresCount = parsedJson['Physical cores']
+  let totalCoresCount = parsedJson['Total cores']
+  let coresUsage = parsedJson['Cores usage']
+  let currentFrequency = parsedJson['Current Frequency']
+  let maxFrequency = parsedJson['Max Frequency']
+  let minFrequency = parsedJson['Min Frequency']
+
+  await applyCpuChart(physicalCoresCount, totalCoresCount, coresUsage, currentFrequency, maxFrequency, minFrequency)
+  await $('#cpuFooter').text('Uppdated: ' + getDate())
 
 }
 
 // ==============
-const applyCpuChart = async () => {
+const applyCpuChart = async (physicalCoresCount, totalCoresCount, coresUsage, currentFrequency, maxFrequency, minFrequency) => {
 
-  var ctx = document.getElementById("myBarChart");
+  var ctx = document.getElementById("cpuChart");
+  coresArrayUsage = Object.values(coresUsage)
+  coresIntUsage = coresArrayUsage.map(item => parseFloat(item))
+
   var myLineChart = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: ["January", "February", "March", "April", "May", "June"],
+      labels: Object.keys(coresUsage),
       datasets: [{
-        label: "Revenue",
+        label: "Usage Percentage",
         backgroundColor: "rgba(2,117,216,1)",
         borderColor: "rgba(2,117,216,1)",
-        data: [4215, 5312, 6251, 7841, 9821, 14984],
+        data: coresIntUsage,
       }],
     },
     options: {
+      tooltips: {
+        callbacks: {
+          label: (tooltipItems, data) => {
+              return data.datasets[tooltipItems.datasetIndex].data[tooltipItems.index] + ' %';
+          }
+        }
+      },
       scales: {
         xAxes: [{
-          time: {
-            unit: 'month'
+          ticks: {
+            // maxTicksLimit: Number(totalCoresCount),
+            style: 'percent',
           },
           gridLines: {
-            display: false
+            display: true,
+            color: "#e4e7ed",
           },
-          ticks: {
-            maxTicksLimit: 6
-          }
         }],
         yAxes: [{
           ticks: {
             min: 0,
-            max: 15000,
-            maxTicksLimit: 5
+            max: 100,
+            maxTicksLimit: 10,
+            callback: value => value + "%"
           },
           gridLines: {
-            display: true
+            display: true,
           }
         }],
       },
       legend: {
-        display: false
+        display: true
       }
     }
   });
 }
+
+// ==========Get and Apply================
+$(document).ready(() =>
+  cpuChart()
+)

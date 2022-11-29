@@ -16,7 +16,7 @@ def cpu():
 
     cpufreq = psutil.cpu_freq()
     for i, percentage in enumerate(psutil.cpu_percent(percpu=True, interval=1)):
-        cpu_per[f"Core {i}"] = f"{percentage}%"
+        cpu_per[f"Core {i+1}"] = f"{percentage}%"
 
     cpu_data = {
         "Physical cores": psutil.cpu_count(logical=False),
