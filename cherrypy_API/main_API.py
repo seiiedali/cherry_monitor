@@ -2,7 +2,7 @@ import os
 import json
 import jwt
 import cherrypy
-from sysmodule import hwinfo, sysinfo, network, log, pam
+from sysmodule import hwinfo, sysinfo, network, log, pam, traffic
 
 SERVER_SECRET = "cherrypy"
 
@@ -147,6 +147,21 @@ class SystemMonitor(object):
         disk_data: dict = json.dumps(hwinfo.disk())
 
         return disk_data
+    
+    @cherrypy.expose
+    @cherrypy.tools.json_in()
+    @cherrypy.tools.json_out()
+    def traffic(self) -> str:
+        """use external module to fetch system hardware information and returns
+        json string respone on 'baseURL/hdinfo' requests
+
+        Returns:
+            str: json string including information on system hardware
+        """
+        disk_data: dict = json.dumps(traffic.io_traffic())
+
+        return disk_data
+
 
     @cherrypy.expose
     @cherrypy.tools.json_in()

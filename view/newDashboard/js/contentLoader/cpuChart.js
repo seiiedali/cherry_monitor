@@ -11,22 +11,22 @@ const cpuChart = async () => {
   let physicalCoresCount = parsedJson['Physical cores']
   let totalCoresCount = parsedJson['Total cores']
   let coresUsage = parsedJson['Cores usage']
+  let cpuUsage = parsedJson['Total CPU Usage']
   let currentFrequency = parsedJson['Current Frequency']
   let maxFrequency = parsedJson['Max Frequency']
   let minFrequency = parsedJson['Min Frequency']
 
-  await applyCpuChart(physicalCoresCount, totalCoresCount, coresUsage, currentFrequency, maxFrequency, minFrequency)
+  await applyCpuChart(physicalCoresCount, totalCoresCount, cpuUsage, coresUsage, currentFrequency, maxFrequency, minFrequency)
   await $('#cpuFooter').text('Uppdated: ' + getDate())
 
 }
 
 // ==============
-const applyCpuChart = async (physicalCoresCount, totalCoresCount, coresUsage, currentFrequency, maxFrequency, minFrequency) => {
+const applyCpuChart = async (physicalCoresCount, totalCoresCount, cpuUsage, coresUsage, currentFrequency, maxFrequency, minFrequency) => {
 
   var ctx = document.getElementById("cpuChart");
-  coresArrayUsage = Object.values(coresUsage)
+  coresArrayUsage = Object.values(coresUsage);
   coresIntUsage = coresArrayUsage.map(item => parseFloat(item))
-
   var myLineChart = new Chart(ctx, {
     type: 'bar',
     data: {
@@ -74,6 +74,15 @@ const applyCpuChart = async (physicalCoresCount, totalCoresCount, coresUsage, cu
       }
     }
   });
+  await $('#cpuLoad').attr('aria-valuenow',parseFloat(cpuUsage))
+  await $('#cpuLoad').css('width',cpuUsage)
+  await $('#cpuLoad').text(cpuUsage)
+  await $('#cpuCu').text(`Current: ${currentFrequency}`)
+  await $('#cpuMax').text(`Max: ${maxFrequency}`)
+  await $('#cpuMin').text(`Min: ${minFrequency}`)
+  await $('#physicalCores').text(physicalCoresCount);
+  await $('#totalCores').text(totalCoresCount);
+
 }
 
 // ==========Get and Apply================

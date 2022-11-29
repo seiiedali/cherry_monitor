@@ -1,14 +1,5 @@
 import psutil
 
-def _get_size(bytes, suffix="B"):
-    # Scale bytes to its proper format
-    factor = 1024
-    for unit in ["", "K", "M", "G", "T", "P"]:
-        if bytes < factor:
-            return f"{bytes:.2f}{unit}{suffix}"
-        bytes /= factor
-
-
 def network_interface():
     network_interface = {}
     # Get Network Information
@@ -38,12 +29,3 @@ def network_interface():
     return network_interface
 
 
-def network_traffic():
-    # get IO statistics since boot
-    net_io = psutil.net_io_counters()
-    network_IO = {
-        "Total Sent": _get_size(net_io.bytes_sent),
-        "Total Received": _get_size(net_io.bytes_recv),
-    }
-
-    return network_IO

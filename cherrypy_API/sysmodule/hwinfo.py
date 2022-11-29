@@ -1,5 +1,6 @@
 
 import psutil
+import re
 
 
 def __get_size(bytes, suffix="B"):
@@ -24,7 +25,7 @@ def cpu():
         "Max Frequency": f"{cpufreq.max:.2f}Mhz",
         "Min Frequency": f"{cpufreq.min:.2f}Mhz",
         "Current Frequency": f"{cpufreq.current:.2f}Mhz",
-        "Total CPU Usage:": f"{psutil.cpu_percent()}%",
+        "Total CPU Usage": f"{psutil.cpu_percent()}%",
         "Cores usage": cpu_per
     }
 
@@ -64,6 +65,8 @@ def disk():
 
     # get all disk partitions
     partitions = psutil.disk_partitions()
+    mm = psutil.disk_partitions()
+    # loop_pattern = re.compile(r"*loop*")
     for partition in partitions:
         try:
             partition_usage = psutil.disk_usage(partition.mountpoint)
@@ -71,20 +74,15 @@ def disk():
             # this can be catched due to the disk that
             # isn't ready
             continue
-        disk_data[partition.device] = {
-            "Mountpoint": partition.mountpoint,
-            "File system type": partition.fstype,
-            "Total Size": __get_size(partition_usage.total),
-            "Used": __get_size(partition_usage.used),
-            "Free": __get_size(partition_usage.free),
-            "Percentage": partition_usage.percent,
-        }
-
-    # get IO statistics since boot
-    disk_io = psutil.disk_io_counters()
-    disk_data["IO Stats"] = {
-        "Total read": __get_size(disk_io.read_bytes),
-        "Total write": __get_size(disk_io.write_bytes),
-    }
+        is_loop: bool = re.match(r".*loop.*", partition.device)
+        if not is_loop:
+            disk_data[partition.device] = {
+                "Mountpoint": partition.mountpoint,
+                "File system type": partition.fstype,
+                "Total Size": __get_size(partition_usage.total),
+                "Used": __get_size(partition_usage.used),
+                "Free": __get_size(partition_usage.free),
+                "Percentage": partition_usage.percent,
+            }
 
     return disk_data
