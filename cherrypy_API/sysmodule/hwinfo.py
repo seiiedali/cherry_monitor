@@ -65,8 +65,6 @@ def disk():
 
     # get all disk partitions
     partitions = psutil.disk_partitions()
-    mm = psutil.disk_partitions()
-    # loop_pattern = re.compile(r"*loop*")
     for partition in partitions:
         try:
             partition_usage = psutil.disk_usage(partition.mountpoint)
