@@ -26,6 +26,15 @@ const applySwapChart = (available, used, total) => {
   let unavailable = (totalMermory - usedMemory - availableMemory).toFixed(2)
   var myPieChart = new Chart(ctx, {
     type: 'pie',
+    options: {
+      tooltips: {
+        callbacks: {
+          label: (tooltipItems, data) => {
+            return data.labels[tooltipItems.datasetIndex] + ': ' + data.datasets[tooltipItems.datasetIndex].data[tooltipItems.index] + ' GB';
+          }
+        }
+      }
+    },
     data: {
       labels: ["Used", "Available", "Unavailable"],
       datasets: [{

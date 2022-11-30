@@ -41,6 +41,19 @@ const applyDiskChart = (available, used, total, name) => {
 
   var myPieChart = new Chart(ctx, {
     type: 'doughnut',
+    options: {
+      title: {
+        display: true,
+        text: name
+      },
+      tooltips: {
+        callbacks: {
+          label: (tooltipItems, data) => {
+            return data.labels[tooltipItems.datasetIndex]+ ': ' + data.datasets[tooltipItems.datasetIndex].data[tooltipItems.index] + ' GB';
+          }
+        }
+      },
+    },
     data: {
       labels: ["Used", "Available", "Unavailable"],
       datasets: [{
@@ -48,10 +61,6 @@ const applyDiskChart = (available, used, total, name) => {
         backgroundColor: ['#dc3545', '#007bff', '#cac7d1'],
       }],
     },
-    title: {
-      display: true,
-      text: name
-    }
   });
 }
 // ==========Get and Apply================

@@ -100,9 +100,7 @@ class SystemMonitor(object):
             str: json string including network information on 'interface'
             and 'traffic'
         """
-        net_data: dict = {}
-        net_data['interface'] = network.network_interface()
-        net_data['traffic'] = network.network_traffic()
+        net_data: dict = network.network_interface()
         net_data_json: str = json.dumps(net_data)
         return net_data_json
 

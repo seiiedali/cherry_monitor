@@ -70,14 +70,14 @@ const applyCpuChart = async (physicalCoresCount, totalCoresCount, cpuUsage, core
         }],
       },
       legend: {
-        display: true
+        display: false
       }
     }
   });
   await $('#cpuLoad').attr('aria-valuenow',parseFloat(cpuUsage))
   await $('#cpuLoad').css('width',cpuUsage)
   await $('#cpuLoad').text(cpuUsage)
-  await $('#cpuCu').text(`Current: ${currentFrequency}`)
+  await $('#cpuCurrent').text(`Current: ${currentFrequency}`)
   await $('#cpuMax').text(`Max: ${maxFrequency}`)
   await $('#cpuMin').text(`Min: ${minFrequency}`)
   await $('#physicalCores').text(physicalCoresCount);

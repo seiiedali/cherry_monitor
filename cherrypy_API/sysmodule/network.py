@@ -1,6 +1,7 @@
 import psutil
 
-def network_interface():
+
+def network_interface() -> dict:
     network_interface = {}
     # Get Network Information
 
@@ -27,5 +28,3 @@ def network_interface():
                 }
 
     return network_interface
-
-
