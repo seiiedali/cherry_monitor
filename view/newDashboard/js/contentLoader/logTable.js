@@ -36,21 +36,9 @@ const getLog = async () => {
     await $('#tablePlaceholder').ready()
     await $('#tablePlaceholder').replaceWith(table)
     await $('#logTable').DataTable();
-    await console.log('what the fuck is happening')
 
 }
 
-
-// ========Check Json Format=======
-const isJsonString = (str) => {
-    let parsed
-    try {
-        parsed = JSON.parse(str);
-    } catch (e) {
-        return str;
-    }
-    return parsed;
-}
 // =========Create Log Table Html
 const logHtml = (logData) => {
     let tableRows = ``
@@ -90,7 +78,6 @@ const logHtml = (logData) => {
     </tbody>
     </table>
     `
-    console.log(finalTable)
     return finalTable
 }
 // =============Get Log===================

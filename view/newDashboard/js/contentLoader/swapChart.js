@@ -30,7 +30,7 @@ const applySwapChart = (available, used, total) => {
       tooltips: {
         callbacks: {
           label: (tooltipItems, data) => {
-            return data.labels[tooltipItems.datasetIndex] + ': ' + data.datasets[tooltipItems.datasetIndex].data[tooltipItems.index] + ' GB';
+            return data.labels[tooltipItems.index] + ': ' + data.datasets[tooltipItems.datasetIndex].data[tooltipItems.index] + ' GB';
           }
         }
       }

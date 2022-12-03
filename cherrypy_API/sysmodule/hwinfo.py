@@ -31,7 +31,6 @@ def cpu():
 
     return cpu_data
 
-
 def memory():
     memory = {}
 

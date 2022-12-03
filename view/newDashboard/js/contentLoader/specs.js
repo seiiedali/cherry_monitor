@@ -6,108 +6,79 @@ Chart.defaults.global.defaultFontColor = '#292b2c';
 
 
 // ==============Get and apply Network Inreface Cards======================
-const applyNetworkCards = async () => {
+const applySysinfoCards = async () => {
     let jsonResponse = ''
-    await $.get('http://localhost:8080/network', (responseData) => jsonResponse = responseData)
+    await $.get('http://localhost:8080/sysinfo', (responseData) => jsonResponse = responseData)
     let parsedJson = await isJsonString(jsonResponse);
-    await console.log(parsedJson);
-    let networkCardWrapper = await $("#networkCards");
-    let interfaceCount = 0;
+    let sysinfoCardWrapper = await $("#specsTable");
     for (let property in parsedJson) {
-        await console.log(parsedJson[property])
-        let networkCard = await createNetworkCard(property, parsedJson[property], interfaceCount)
-        await networkCardWrapper.append(networkCard)
-        interfaceCount++;
+        let sysinfoCard = await createSysinfoCard(property, parsedJson[property])
+        // console.log(sysinfoCard)
+        await sysinfoCardWrapper.append(sysinfoCard)
     }
+    await $.get('http://localhost:8080/disk', responseData => jsonResponse = responseData)
+    let parsedDisk = await isJsonString(jsonResponse)
+    let diskCard = await createSysinfoCard('Disk', parsedDisk)
+    await sysinfoCardWrapper.append(diskCard)
 }
 
 // =========Network Card==========
-const createNetworkCard = (interfaceName, interfaceInfo, interfaceNumber) => {
-    ip4Key = 'IPv4';
-    ip6Key = 'IPv6';
-    macKey = 'Physical';
-    let accardion =
+const createSysinfoCard = (sysinfoName, sysinfoData) => {
+    let sysCard =
         `
         <div class="col mb-4">
-        <div class="card">
-            <div class="card-header">
-                <i class="fas fa-network-wired me-1"></i>
-                <strong>${interfaceName}</strong> Interface
-            </div>
-            <div class="card-body">
-                <div class="accordion" id="accordionPanel-${interfaceNumber}-v4">
-                    <div class="accordion-item">
-                        <h2 class="accordion-header accordion-bg:bg-secondary" id="panelsStayOpen-heading-${interfaceNumber}-v4">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#panelsStayOpen-collapse-${interfaceNumber}-v4" aria-expanded="true"
-                                aria-controls="panelsStayOpen-collapse-${interfaceNumber}-v4">
-                                <strong>IPV4 </strong>
-                            </button>
-                        </h2>
-                        <div id="panelsStayOpen-collapse-${interfaceNumber}-v4" class="accordion-collapse collapse show"
-                            aria-labelledby="panelsStayOpen-heading-${interfaceNumber}-v4">
-                            <div class="accordion-body">
-                                <ul class="list-group list-group-flush">
-                                    <li class="list-group-item">IPV4 Address:&nbsp;&nbsp;&nbsp;&nbsp;<samp>${interfaceInfo[ip4Key]['IPv4 Address']}</samp></li>
-                                    <li class="list-group-item">IPV4 Netmask: &nbsp;&nbsp;&nbsp;&nbsp;<samp>${interfaceInfo[ip4Key]['IPv4 Netmask']}</samp></li>
-                                    <li class="list-group-item">IPV4 Broadcast: &nbsp;&nbsp;&nbsp;&nbsp;<samp>${interfaceInfo[ip4Key]['IPv4 Broadcast']}</samp></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-info-circle me-1"></i>
+                    <strong>${sysinfoName}</strong> Specs
                 </div>
-                <div class="accordion" id="accordionPanel-${interfaceNumber}-v6">
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="panelsStayOpen-heading-${interfaceNumber}-v6">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#panelsStayOpen-collapse-${interfaceNumber}-v6" aria-expanded="false"
-                                aria-controls="panelsStayOpen-collapse-${interfaceNumber}-v6">
-                                <strong>IPV6</strong>
-                            </button>
-                        </h2>
-                        <div id="panelsStayOpen-collapse-${interfaceNumber}-v6" class="accordion-collapse collapse"
-                            aria-labelledby="panelsStayOpen-heading-${interfaceNumber}-v6">
-                            <div class="accordion-body">
-                                <ul class="list-group list-group-flush">
-                                    <li class="list-group-item">IPV6 Address: &nbsp;&nbsp;&nbsp;&nbsp;<samp>${interfaceInfo[ip6Key]['IPv6 Address']}</samp></li>
-                                    <li class="list-group-item">IPV6 Netmask: &nbsp;&nbsp;&nbsp;&nbsp;<samp>${interfaceInfo[ip6Key]['IPv6 Netmask']}</samp></li>
-                                    <li class="list-group-item">IPV6 Broadcast: &nbsp;&nbsp;&nbsp;&nbsp;<samp>${interfaceInfo[ip6Key]['IPv6 Broadcast']}</samp></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+                <div class="card-body">
+                    ${jsonToTable(sysinfoData, sysinfoName)}
                 </div>
-                <div class="accordion" id="accordionPanel-${interfaceNumber}-mac">
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="panelsStayOpen-heading-${interfaceNumber}-mac">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#panelsStayOpen-collapse-${interfaceNumber}-mac" aria-expanded="false"
-                                aria-controls="panelsStayOpen-collapse-${interfaceNumber}-mac">
-                                <strong>Physical Layer</strong>
-                            </button>
-                        </h2>
-                        <div id="panelsStayOpen-collapse-${interfaceNumber}-mac" class="accordion-collapse collapse"
-                            aria-labelledby="panelsStayOpen-heading-${interfaceNumber}-mac">
-                            <div class="accordion-body">
-                                <ul class="list-group list-group-flush">
-                                    <li class="list-group-item">MAC Address: &nbsp;&nbsp;&nbsp;&nbsp;<samp>${interfaceInfo[macKey]['MAC Address']}</samp></li>
-                                    <li class="list-group-item">MAC Broadcast: &nbsp;&nbsp;&nbsp;&nbsp;<samp>${interfaceInfo[macKey]['Broadcast MAC']}</samp></li>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+                <div class="card-footer small text-muted">
+                    Fetched: ${getDate()}
                 </div>
-            </div>
-            <div class="card-footer small text-muted">
-                Fetched: ${getDate()}
             </div>
         </div>
-    </div>
-    `
-    return accardion
+        `
+    return sysCard
 }
+// =============Json to Table=============
+const jsonToTable = (jsonData, tableHeader = 'not set') => {
+
+    const rowGenerator = () => {
+        let rows = ``
+        for (const property in jsonData) {
+            if ((typeof (jsonData[property]) === "object") && (jsonData[property] != null)) {
+                rows += jsonToTable(jsonData[property], property)
+            }
+            else {
+                rows +=
+                    `
+                    <tr>
+                        <td> ${property}</td>
+                        <td>${jsonData[property]}</td>
+                    </tr>
+                    `
+            }
+        }
+        return rows
+    }
+    let tableTemplate =
+        `
+        <table class="table">
+            <thead class="thead-dark">
+                <th><span> <strong>${tableHeader}</strong></span></th>
+            </thead>
+            <tbody>
+                ${rowGenerator()}
+            </tbody>
+        </table>
+        `
+    return tableTemplate
+};
 // ==========Get and Apply================
 $(document).ready(() =>
-    applyNetworkCards()
+    applySysinfoCards()
 )
+

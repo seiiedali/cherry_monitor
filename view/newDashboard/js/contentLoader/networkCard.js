@@ -14,7 +14,6 @@ const applyNetworkCards = async () => {
     let networkCardWrapper = await $("#networkCards");
     let interfaceCount = 0;
     for (let property in parsedJson) {
-        await console.log(parsedJson[property])
         let networkCard = await createNetworkCard(property, parsedJson[property], interfaceCount)
         await networkCardWrapper.append(networkCard)
         interfaceCount++;
