@@ -16,7 +16,7 @@ $(document).ready(() => {
             result = await JSON.parse(result)
             await console.log(result['authenticated'])
             if(result['authenticated'] === true){
-                window.location.replace("http://localhost:8080/view/dashboard/index.html");
+                window.location.replace("http://localhost:8080/view/newDashboard/index.html");
             }
             else{
                 $('#message').html(`<div class="alert alert-danger" role="alert">

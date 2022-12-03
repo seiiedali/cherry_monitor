@@ -32,10 +32,16 @@ class SystemMonitor(object):
             cherrypy.HTTPRedirect: raise an exeption of the requested redirection/
             to the cherrypy running demon to redirect the client
         """
-        raise cherrypy.HTTPRedirect(cherrypy.url('/view/newDashboard/login.html'))
+        raise cherrypy.HTTPRedirect(cherrypy.url('/view/login/index.html'))
     
     @cherrypy.expose
     def default(self, *args, **kwargs):
+        """defualt function to handle undefined api routes
+
+        Raises:
+            cherrypy.HTTPRedirect: cherrypy redirection exeption to redirect user
+            to the not found page
+        """
         raise cherrypy.HTTPRedirect(cherrypy.url('/view/newDashboard/404.html'))
     
     @cherrypy.expose
