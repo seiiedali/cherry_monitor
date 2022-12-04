@@ -16,7 +16,7 @@ const getDate = ()=>{
   
     const d = new Date();
     let month = months[d.getMonth()];
-    let currentDate = `${d.getDay()} ${month} at ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`
+    let currentDate = `${d.getDate()} ${month} at ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`
     return currentDate
   }
   

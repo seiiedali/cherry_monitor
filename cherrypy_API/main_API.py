@@ -80,7 +80,6 @@ class SystemMonitor(object):
         response: str = json.dumps(response)
         return response
 
-
     @cherrypy.expose
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()

@@ -1,40 +1,30 @@
-// ==============Flush Content=======================
-const flushContent = () => {
-    $('#content').html('')
-}
-
 
 // =================Submit log request form======================
 // TODO This module need to be implemented
-// const logRequestSubmit = () => {
-//     $("body").on(
-//         "submit",
-//         "form",
-//         async (event) => {
-//             await event.preventDefault()
-//             let fileName = await $("[name='file_name']").val();
-//             let readDirection = await $("[name='direction']").val();
-//             let recordCount = await $("[name='line_count']").val();
-//             let logData = {
-//                 file_name: fileName,
-//                 direction: readDirection,
-//                 line_count: recordCount
-//             };
-//             let logResponse = await getRequest('log', logData);
-//             let logHtml = await logComponent(logResponse, fileName, readDirection, recordCount)
-//             await $('#content').html(logHtml)
-//         }
-//     )
-// }
+const logRequestSubmit = () => {
+    $("body").on(
+        "submit",
+        "form",
+        async (event) => {
+            await console.log('this is happening')
+            await event.preventDefault()
+            let fileName = await $("#logTypeSelection").val();
+            let readDirection = await $("#logDirection").val();
+            let recordCount = await $("#logCount").val();
+            await console.log(fileName,readDirection,recordCount)
+            await getLog(fileName, readDirection, recordCount);
+        }
+    )
+}
 
 // ==============Get and apply Log Data into table======================
-const getLog = async () => {
+const getLog = async (fileName = 'syslog', direction = 'tail', lineCount = '100') => {
     let jsonResponse = ''
-    await $.get('http://localhost:8080/log?file_name=syslog&direction=head&line_count=100', (responseData) => jsonResponse = responseData)
+    await $.get(`http://localhost:8080/log?file_name=${fileName}&direction=${direction}&line_count=${lineCount}`, (responseData) => jsonResponse = responseData)
     let parsedJson = await isJsonString(jsonResponse)
     let table = await logHtml(parsedJson)
     await $('#tablePlaceholder').ready()
-    await $('#tablePlaceholder').replaceWith(table)
+    await $('#tablePlaceholder').html(table)
     await $('#logTable').DataTable();
 
 }
@@ -81,4 +71,7 @@ const logHtml = (logData) => {
     return finalTable
 }
 // =============Get Log===================
-$(document).ready(getLog)
+$(document).ready(() => {
+    getLog()
+    logRequestSubmit()
+})

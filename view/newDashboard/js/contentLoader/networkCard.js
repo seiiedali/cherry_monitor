@@ -10,7 +10,6 @@ const applyNetworkCards = async () => {
     let jsonResponse = ''
     await $.get('http://localhost:8080/network', (responseData) => jsonResponse = responseData)
     let parsedJson = await isJsonString(jsonResponse);
-    await console.log(parsedJson);
     let networkCardWrapper = await $("#networkCards");
     let interfaceCount = 0;
     for (let property in parsedJson) {
