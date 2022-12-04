@@ -20,7 +20,7 @@ const logRequestSubmit = () => {
 // ==============Get and apply Log Data into table======================
 const getLog = async (fileName = 'syslog', direction = 'tail', lineCount = '100') => {
     let jsonResponse = ''
-    await $.get(`http://localhost:8080/log?file_name=${fileName}&direction=${direction}&line_count=${lineCount}`, (responseData) => jsonResponse = responseData)
+    await $.get(`http://localhost:8080/api/log?file_name=${fileName}&direction=${direction}&line_count=${lineCount}`, (responseData) => jsonResponse = responseData)
     let parsedJson = await isJsonString(jsonResponse)
     let table = await logHtml(parsedJson)
     await $('#tablePlaceholder').ready()

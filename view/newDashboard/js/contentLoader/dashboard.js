@@ -11,7 +11,8 @@ const loadDashboard = () => {
 // ==============Get and apply Network Inreface Cards======================
 const infoCardApply = async (cardName, dataKey, cardId) => {
     let jsonResponse = ''
-    await $.get('http://localhost:8080/traffic', data => jsonResponse = data)
+    let sysinfoRoute = routes['baseUrl'] + routes['apiRoute']['systemInformation']
+    await $.get(sysinfoRoute, (responseData) => jsonResponse = responseData)
     let parsedJson = await isJsonString(jsonResponse);
     let appliedHtml = await createList(cardName, cardId, parsedJson[dataKey])
     let sysinfoCardWrapper = await $(`#${cardId}`);

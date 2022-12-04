@@ -8,7 +8,8 @@ Chart.defaults.global.defaultFontColor = '#292b2c';
 // ==============Get and apply Network Inreface Cards======================
 const applyNetworkCards = async () => {
     let jsonResponse = ''
-    await $.get('http://localhost:8080/network', (responseData) => jsonResponse = responseData)
+    let networkRoute = routes['baseUrl'] + routes['apiRoute']['netwokInterfaces']
+    await $.get(networkRoute, (responseData) => jsonResponse = responseData)
     let parsedJson = await isJsonString(jsonResponse);
     let networkCardWrapper = await $("#networkCards");
     let interfaceCount = 0;

@@ -8,7 +8,8 @@ Chart.defaults.global.defaultFontColor = '#292b2c';
 // ==============Get and apply Memory Pie Chart======================
 const diskChart = async () => {
   let jsonResponse = ''
-  await $.get('http://localhost:8080/disk', (responseData) => jsonResponse = responseData)
+  let diskRoute = routes['baseUrl'] + routes['apiRoute']['diskInfo']
+  await $.get(diskInfo, (responseData) => jsonResponse = responseData)
   let parsedJson = await isJsonString(jsonResponse)
   for (let property in parsedJson) {
     let total = parsedJson[property]['Total Size']

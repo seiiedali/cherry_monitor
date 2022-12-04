@@ -8,7 +8,8 @@ Chart.defaults.global.defaultFontColor = '#292b2c';
 // ==============Get and apply Memory Pie Chart======================
 const memoryChart = async () => {
   let jsonResponse = ''
-  await $.get('http://localhost:8080/memory', (responseData) => jsonResponse = responseData)
+  let memoryRoute = routes['baseUrl'] + routes['apiRoute']['memoryInfo']
+  await $.get(memoryRoute, (responseData) => jsonResponse = responseData)
   let parsedJson = await isJsonString(jsonResponse)
   let total = parsedJson['Virtual Memory']['Total']
   let available = parsedJson['Virtual Memory']['Available']

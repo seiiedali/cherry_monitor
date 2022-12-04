@@ -8,7 +8,8 @@ Chart.defaults.global.defaultFontColor = '#292b2c';
 // ==============Get and apply Memory Pie Chart======================
 const swapChart = async () => {
   let jsonResponse = ''
-  await $.get('http://localhost:8080/memory', (responseData) => jsonResponse = responseData)
+  let swapRoute = routes['baseUrl'] + routes['apiRoute']['memoryInfo']
+  await $.get(swapRoute, (responseData) => jsonResponse = responseData)
   let parsedJson = await isJsonString(jsonResponse)
   let total = parsedJson['Swap Memory']['Total']
   let available = parsedJson['Swap Memory']['Free']

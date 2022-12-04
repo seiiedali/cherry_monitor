@@ -6,7 +6,8 @@ Chart.defaults.global.defaultFontColor = '#292b2c';
 // ==============Get and apply Memory Pie Chart======================
 const cpuChart = async () => {
   let jsonResponse = ''
-  await $.get('http://localhost:8080/cpu', (responseData) => jsonResponse = responseData)
+  let cpuRoute = routes['baseUrl'] + routes['apiRoute']['cpuInfo']
+  await $.get(cpuRoute, (responseData) => jsonResponse = responseData)
   let parsedJson = await isJsonString(jsonResponse)
   let physicalCoresCount = parsedJson['Physical cores']
   let totalCoresCount = parsedJson['Total cores']
@@ -42,7 +43,7 @@ const applyCpuChart = async (physicalCoresCount, totalCoresCount, cpuUsage, core
       tooltips: {
         callbacks: {
           label: (tooltipItems, data) => {
-              return data.datasets[tooltipItems.datasetIndex].data[tooltipItems.index] + ' %';
+            return data.datasets[tooltipItems.datasetIndex].data[tooltipItems.index] + ' %';
           }
         }
       },
@@ -74,8 +75,8 @@ const applyCpuChart = async (physicalCoresCount, totalCoresCount, cpuUsage, core
       }
     }
   });
-  await $('#cpuLoad').attr('aria-valuenow',parseFloat(cpuUsage))
-  await $('#cpuLoad').css('width',cpuUsage)
+  await $('#cpuLoad').attr('aria-valuenow', parseFloat(cpuUsage))
+  await $('#cpuLoad').css('width', cpuUsage)
   await $('#cpuLoad').text(cpuUsage)
   await $('#cpuCurrent').text(`Current: ${currentFrequency}`)
   await $('#cpuMax').text(`Max: ${maxFrequency}`)

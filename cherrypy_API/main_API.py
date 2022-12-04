@@ -6,8 +6,29 @@ from sysmodule import hwinfo, sysinfo, network, log, pam, traffic
 
 SERVER_SECRET = "cherrypy"
 
+class StaticContent(object):
+    @cherrypy.expose
+    def index(self):
+        """landing page, handle the requests to the root route and /.index(value)
 
-class SystemMonitor(object):
+        Raises:
+            cherrypy.HTTPRedirect: raise an exeption of the requested redirection/
+            to the cherrypy running demon to redirect the client
+        """
+        raise cherrypy.HTTPRedirect(cherrypy.url('/view/login/index.html'))
+    
+    
+    @cherrypy.expose
+    def default(self, *args, **kwargs):
+        """defualt function to handle undefined api routes
+
+        Raises:
+            cherrypy.HTTPRedirect: cherrypy redirection exeption to redirect user
+            to the not found page
+        """
+        raise cherrypy.HTTPRedirect(cherrypy.url('/view/newDashboard/404.html'))
+
+class RestAPI(object):
     """main system monitor application passed to cherrypy webserver
     that each of its function works as an requent endpoints base on
     function name
@@ -24,25 +45,6 @@ class SystemMonitor(object):
         cherrypy Object: an object passed to cherrypy webserver
     """
 
-    @cherrypy.expose
-    def index(self):
-        """landing page, handle the requests to the root route and /.index(value)
-
-        Raises:
-            cherrypy.HTTPRedirect: raise an exeption of the requested redirection/
-            to the cherrypy running demon to redirect the client
-        """
-        raise cherrypy.HTTPRedirect(cherrypy.url('/view/login/index.html'))
-    
-    @cherrypy.expose
-    def default(self, *args, **kwargs):
-        """defualt function to handle undefined api routes
-
-        Raises:
-            cherrypy.HTTPRedirect: cherrypy redirection exeption to redirect user
-            to the not found page
-        """
-        raise cherrypy.HTTPRedirect(cherrypy.url('/view/newDashboard/404.html'))
     
     @cherrypy.expose
     @cherrypy.tools.json_in()
@@ -80,9 +82,37 @@ class SystemMonitor(object):
         response: str = json.dumps(response)
         return response
 
+
+    @cherrypy.tools.register('before_handler')
+    def token_check():
+        
+        cookie = cherrypy.request.cookie
+        response: dict = {'verified': False,
+                          'message': ''}
+        
+        session_token = cookie.get('token', False)
+        if not session_token:
+            response['verified'] = False
+            response['message'] = 'No session token is porvided, Try to log in!'
+        # verify the session token
+        else:
+            session_token = session_token.value
+            try:
+                decode_token = jwt.decode(session_token,SERVER_SECRET, algorithms=["HS256"])
+            except jwt.InvalidSignatureError:
+                response['verified'] = False
+                response['message'] = 'Token is not verfied'
+            else:
+                response['verified'] = True
+                response['message'] = str(decode_token)
+        # print('===========this is called')
+
+
+
     @cherrypy.expose
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
+    # @cherrypy.tools.token_check()
     def sysinfo(self) -> str:
         """use external module to fetch system information and return the json
         output to the request on baseURL/sysinfo
@@ -190,37 +220,13 @@ class SystemMonitor(object):
         return log_data_json
 
 
-    @cherrypy.expose
-    @cherrypy.tools.json_in()
-    @cherrypy.tools.json_out()
-    def token_handler(self):
-        
-        cookie = cherrypy.request.cookie
-        response: dict = {'verified': False,
-                          'message': ''}
-        
-        session_token = cookie.get('token', False)
-        if not session_token:
-            response['verified'] = False
-            response['message'] = 'No session token is porvided, Try to log in!'
-        # verify the session token
-        else:
-            session_token = session_token.value
-            try:
-                decode_token = jwt.decode(session_token,SERVER_SECRET, algorithms=["HS256"])
-            except jwt.InvalidSignatureError:
-                response['verified'] = False
-                response['message'] = 'Token is not verfied'
-            else:
-                response['verified'] = True
-                response['message'] = str(decode_token)
-        return response
-
-
 CP_CONF = {
     '/': {
         'tools.sessions.on': True,
-        'tools.staticdir.root': os.path.abspath(os.getcwd())
+        'tools.staticdir.root': os.path.abspath(os.getcwd()),
+        'tools.token_check.on': True,
+        'tools.trailing_slash.on' : False,
+        # 'request.dispatch': cherrypy.dispatch.MethodDispatcher()
         # 'tools.staticdir.index': '/view/login/index.html'
     },
     '/view': {
@@ -231,4 +237,7 @@ CP_CONF = {
 
 
 if __name__ == "__main__":
-    cherrypy.quickstart(SystemMonitor(), '/', CP_CONF)
+    cherrypy.tree.mount(RestAPI(), '/api')
+    cherrypy.tree.mount(StaticContent(), '/', CP_CONF)
+    cherrypy.engine.start()
+    cherrypy.engine.block()

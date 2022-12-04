@@ -19,4 +19,19 @@ const getDate = ()=>{
     let currentDate = `${d.getDate()} ${month} at ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`
     return currentDate
   }
+
+
+// ========= API Routes ================
+const routes = {
+  'baseUrl': 'http://localhost:8080/',
+  'apiRoute': {
+    'netwokInterfaces': 'api/network',
+    'systemInformation': 'api/sysinfo',
+    'cpuInfo': 'api/cpu',
+    'memoryInfo': 'api/memory',
+    'diskInfo': 'api/disk',
+    'inputOutputReport': 'api/traffic',
+    'logRecord': 'api/log',
+  }
+}
   

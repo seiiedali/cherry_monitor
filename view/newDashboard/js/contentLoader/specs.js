@@ -8,7 +8,8 @@ Chart.defaults.global.defaultFontColor = '#292b2c';
 // ==============Get and apply Network Inreface Cards======================
 const applySysinfoCards = async () => {
     let jsonResponse = ''
-    await $.get('http://localhost:8080/sysinfo', (responseData) => jsonResponse = responseData)
+    let sysinfoRoute = routes['baseUrl'] + routes['apiRoute']['systemInformation']
+    await $.get(sysinfoRoute, (responseData) => jsonResponse = responseData)
     let parsedJson = await isJsonString(jsonResponse);
     let sysinfoCardWrapper = await $("#specsTable");
     for (let property in parsedJson) {
@@ -16,7 +17,8 @@ const applySysinfoCards = async () => {
         // console.log(sysinfoCard)
         await sysinfoCardWrapper.append(sysinfoCard)
     }
-    await $.get('http://localhost:8080/disk', responseData => jsonResponse = responseData)
+    let diskRoute = routes['baseUrl'] + routes['apiRoute']['diskInfo']
+    await $.get(diskRoute, (responseData) => jsonResponse = responseData)
     let parsedDisk = await isJsonString(jsonResponse)
     let diskCard = await createSysinfoCard('Disk', parsedDisk)
     await sysinfoCardWrapper.append(diskCard)
