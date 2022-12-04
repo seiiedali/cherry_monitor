@@ -38,7 +38,7 @@ const applyDiskChart = (available, used, total, name) => {
   let usedMemory = parseFloat(used)
   let totalMermory = parseFloat(total)
   let unavailable = (totalMermory - usedMemory - availableMemory).toFixed(2)
-  // console.log(availableMemory, availableMemory, usedMemory, name, unavailable)
+  console.log(availableMemory, availableMemory, usedMemory, name, unavailable)
 
   var myPieChart = new Chart(ctx, {
     type: 'doughnut',

@@ -11,6 +11,7 @@ const applyNetworkCards = async () => {
     let networkRoute = routes['baseUrl'] + routes['apiRoute']['netwokInterfaces']
     await $.get(networkRoute, (responseData) => jsonResponse = responseData)
     let parsedJson = await isJsonString(jsonResponse);
+    await console.log(parsedJson);
     let networkCardWrapper = await $("#networkCards");
     let interfaceCount = 0;
     for (let property in parsedJson) {
